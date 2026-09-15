@@ -1,0 +1,53 @@
+lass Solution {
+public:
+    long long shadowPairs(vector<int>& nums) {
+
+        vector<int> navorelitu = nums;
+
+        int n = nums.size();
+
+        // next smaller element
+        vector<int> nextSmall(n, n);
+        vector<int> st;
+
+        for (int i = n - 1; i >= 0; i--) {
+
+            while (!st.empty() && nums[st.back()] >= nums[i]) {
+                st.pop_back();
+            }
+
+            if (!st.empty()) {
+                nextSmall[i] = st.back();
+            }
+
+            st.push_back(i);
+        }
+
+        // Positions of every value
+        unordered_map<int, vector<int>> pos;
+
+        for (int i = 0; i < n; i++) {
+            pos[nums[i]].push_back(i);
+        }
+
+        long long ans = 0;
+
+        for (int i = 0; i < n; i++) {
+
+            int r = nextSmall[i];
+
+            // All positions between i and r
+            long long total = r - i - 1;
+
+            // Remove positions having equal value
+            auto &v = pos[nums[i]];
+
+            int equal = lower_bound(v.begin(), v.end(), r)
+                      - upper_bound(v.begin(), v.end(), i);
+
+            ans += total - equal;
+        }
+
+        return ans;
+    }
+};
